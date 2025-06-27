@@ -1,8 +1,11 @@
 import React from 'react'
+import { FaBloggerB } from "react-icons/fa"
 
-function Logo({width = '100px'}) {
+function Logo() {
   return (
-    <div>Logo</div>
+    <div className= "flex justify-center items-center text-5xl text-gray-800">
+      <FaBloggerB /> 
+    </div>
   )
 }
 

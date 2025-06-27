@@ -9,39 +9,48 @@ export default function Post() {
     const [post, setPost] = useState(null);
     const { slug } = useParams();
     const navigate = useNavigate();
-
     const userData = useSelector((state) => state.auth.userData);
 
-    const isAuthor = post && userData ? post.userId === userData.$id : false;
+    const isAuthor = post && userData && post.userId === userData.$id;
 
     useEffect(() => {
-        if (slug) {
-            appwriteService.getPost(slug).then((post) => {
-                if (post) setPost(post);
-                else navigate("/");
-            });
-        } else navigate("/");
-    }, [slug, navigate]);
+        if (!slug) {
+            navigate("/");
+            return;
+        }
 
-    const deletePost = () => {
-        appwriteService.deletePost(post.$id).then((status) => {
-            if (status) {
-                appwriteService.deleteFile(post.featuredImage);
+        appwriteService.getPost(slug).then((fetchedPost) => {
+            if (fetchedPost) {
+                setPost(fetchedPost);
+            } else {
                 navigate("/");
             }
         });
+    }, [slug, navigate]);
+
+    const deletePost = async () => {
+        try {
+            const status = await appwriteService.deletePost(post.$id);
+            if (status) {
+                await appwriteService.deleteFile(post.featuredImage);
+                navigate("/");
+            }
+        } catch (error) {
+            console.error("Error deleting post or image:", error);
+        }
     };
 
-    return post ? (
+    if (!post) return null;
+
+    return (
         <div className="py-8">
             <Container>
                 <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
                     <img
                         src={appwriteService.getFilepreview(post.featuredImage)}
                         alt={post.title}
-                        className="rounded-xl"
+                        className="rounded-xl max-h-[500px] object-cover"
                     />
-
                     {isAuthor && (
                         <div className="absolute right-6 top-6">
                             <Link to={`/edit-post/${post.$id}`}>
@@ -58,10 +67,10 @@ export default function Post() {
                 <div className="w-full mb-6">
                     <h1 className="text-2xl font-bold">{post.title}</h1>
                 </div>
-                <div className="browser-css">
+                <div className="browser-css prose max-w-none">
                     {parse(post.content)}
-                    </div>
+                </div>
             </Container>
         </div>
-    ) : null;
+    );
 }

@@ -12,19 +12,22 @@ function Signup() {
     const dispatch = useDispatch()
     const {register, handleSubmit} = useForm()
 
-    const create = async(data) => {
-        setError("")
-        try {
-           const userdata = await authservice.createAccount(data)
-            if(userdata) {
-                const userdata = await authservice.getCurrentUser()
-                if(userdata) dispatch(login(userdata));
-                navigate("/")
-            }
-        } catch (error) {
-            setError(error.message)    
+    const create = async (data) => {
+    setError("");
+    try {
+        await authservice.createAccount(data);
+        const userdata = await authservice.getCurrentUser();
+        if (userdata) {
+            dispatch(login(userdata));
+            navigate("/");
         }
-    }
+    } catch (error) {
+        if (error.code === 409) {
+            setError("Email already exists. Try logging in.");
+        } else {
+            setError(error.message || "Something went wrong.");
+        }
+    }};
   return (
     <div className="flex items-center justify-center">
 <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}>
@@ -66,13 +69,19 @@ function Signup() {
                 }
             })}
             />
-            <Input
-            label="Password: "
-            type="password"
-            placeholder="Enter your password"
-            {...register("password", {
-                required: true,})}
-            />
+           <Input
+                label="Password: "
+                type="password"
+                placeholder="Enter your password"
+                {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters long"
+                    }
+                })}
+                />
+
             <Button type="submit" className="w-full">
                 Create Account
             </Button>
