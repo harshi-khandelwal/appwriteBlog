@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login as authLogin } from '../store/authSlice'
-import { Button, Input, Logo } from './index'
+import { Button, Input, Logo, Loader } from './index'
 import { useDispatch, useSelector } from 'react-redux'
 import authService from '../appwrite/auth'
 import { useForm } from 'react-hook-form'
@@ -18,7 +18,7 @@ function Login() {
         setError("")
         setLoading(true)
         try {
-            const session = await authService.login(data) // Automatically deletes old session now
+            const session = await authService.login(data)
 
             if (session) {
                 const userData = await authService.getCurrentUser()
@@ -37,13 +37,17 @@ function Login() {
             setLoading(false)
         }
     }
-    if (isLoggedIn) {
-        return null
-    }
+
+    if (isLoggedIn) return null
 
     return (
-        <div className='flex items-center justify-center w-full'>
-            <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10 shadow-lg">
+        <div className='flex items-center justify-center w-full min-h-screen relative '>
+            {loading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-60 z-50">
+                    <Loader />
+                </div>
+            )}
+            <div className="mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10 shadow-lg z-10">
                 <div className="mb-2 flex justify-center">
                     <span className="inline-block w-full max-w-[100px]">
                         <Logo width="100%" />
@@ -80,6 +84,10 @@ function Login() {
                             placeholder="Enter your password"
                             {...register("password", {
                                 required: "Password is required",
+                                minLength: {
+                                    value: 8,
+                                    message: "Password must be at least 8 characters long"
+                                }
                             })}
                         />
 

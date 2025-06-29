@@ -88,6 +88,7 @@ export default function PostForm({ post }) {
                 setValue("slug", slugTransform(value.title), { shouldValidate: true })
             }
         })
+        
 
         return () => subscription.unsubscribe()
     }, [watch, slugTransform, setValue])
@@ -133,6 +134,7 @@ export default function PostForm({ post }) {
 
                 {post && (
                     <div className="w-full mb-4">
+                        {console.log("Image URL:", appwriteService.getFilepreview(post.featuredImage))}
                         <img
                             src={appwriteService.getFilepreview(post.featuredImage)}
                             alt={post.title}

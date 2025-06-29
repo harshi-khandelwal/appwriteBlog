@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import authservice from '../../appwrite/auth'
 import { logout } from '../../store/authSlice'
 import Modal from '../Modal'
 
 function LogoutBtn() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false)
 
   const logoutHandler = () => {
@@ -15,6 +17,7 @@ function LogoutBtn() {
 
       setTimeout(() => {
         setShowModal(false)
+        navigate('/login') 
       }, 2000)
     })
   }
@@ -31,7 +34,10 @@ function LogoutBtn() {
       {showModal && (
         <Modal
           message="You've been logged out."
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false)
+            navigate('/login')
+          }}
         />
       )}
     </>
