@@ -122,13 +122,12 @@ export class Service {
         }
     }
 
-    getFilepreview(fileId) {
+    getFileView(fileId) {
     try {
         return this.bucket
-            .getFilePreview(conf.appwriteBucketid, fileId)
-            .href; 
+            .getFileView(conf.appwriteBucketid, fileId); 
     } catch (error) {
-        console.error("Appwrite Service :: getFilepreview ::", error);
+        console.error("Appwrite Service :: getFileView ::", error);
         return "";
     }
 }

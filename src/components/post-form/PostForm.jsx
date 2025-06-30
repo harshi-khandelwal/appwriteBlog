@@ -134,9 +134,9 @@ export default function PostForm({ post }) {
 
                 {post && (
                     <div className="w-full mb-4">
-                        {console.log("Image URL:", appwriteService.getFilepreview(post.featuredImage))}
+                        {console.log("Image URL:", appwriteService.getFileView(post.featuredImage))}
                         <img
-                            src={appwriteService.getFilepreview(post.featuredImage)}
+                            src={appwriteService.getFileView(post.featuredImage)}
                             alt={post.title}
                             className="rounded-lg"
                         />
